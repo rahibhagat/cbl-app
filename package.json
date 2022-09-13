@@ -1,0 +1,30 @@
+{
+  "name": "techovarya-cbl-app",
+  "version": "1.0.2",
+  "description": "",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist/ && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.7.16",
+    "@types/react": "^18.0.19",
+    "@types/react-dom": "^18.0.6",
+    "axios": "^0.27.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "deep-object-diff": "^1.1.7"
+  }
+}
