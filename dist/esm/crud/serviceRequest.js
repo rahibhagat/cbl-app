@@ -24,13 +24,14 @@ let defaultConfig = {
     },
 };
 let instance = axios.create(defaultConfig);
+let config = "standardConfig";
 export function jwtInterceptor() {
     instance.interceptors.request.use((request) => __awaiter(this, void 0, void 0, function* () {
         let app = getDataFromAsync('app');
         if (app && app.jwt_token) {
-            request.headers
+            request.headers && config == "standardConfig"
                 ? (request.headers.Authorization = `Bearer ${app.jwt_token}`)
-                : (request.headers = { 'Accept-Encoding': `*` });
+                : (request.headers = { "Accept-Encoding": `*` });
         }
         return request;
     }));
@@ -62,6 +63,7 @@ export const axiosService = {
     patch,
     Delete,
     put,
+    download
 };
 function get(url) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -130,19 +132,28 @@ function Delete(url) {
         return response;
     });
 }
+function download(url, responseType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let response = yield instance.get(url, {
+            responseType: responseType,
+        });
+        return response;
+    });
+}
 export function send(params) {
     return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
         let Url;
         var Params;
+        config = params.configType;
         if (!params || typeof params != 'object') {
             throw new Error('params is undefined or not an object');
         }
         switch (params.method) {
-            case 'GET':
+            case "GET":
                 Url = params.baseurl + params.url;
                 get(Url)
                     .then((result) => {
-                    console.log('resulttt', result);
+                    console.log("resulttt", result);
                     resolve(result);
                 })
                     .catch((err) => {
@@ -151,7 +162,7 @@ export function send(params) {
                     reject(error);
                 });
                 break;
-            case 'POST':
+            case "POST":
                 Url = params.baseurl + params.url;
                 Params = params.obj;
                 post(Url, Params)
@@ -164,7 +175,7 @@ export function send(params) {
                     reject(error);
                 });
                 break;
-            case 'PATCH':
+            case "PATCH":
                 Url = params.baseurl + params.url;
                 Params = params.obj;
                 patch(Url, Params)
@@ -177,7 +188,7 @@ export function send(params) {
                     reject(error);
                 });
                 break;
-            case 'PUT':
+            case "PUT":
                 Url = params.baseurl + params.url;
                 Params = params.obj;
                 put(Url, Params)
@@ -190,9 +201,21 @@ export function send(params) {
                     reject(error);
                 });
                 break;
-            case 'DELETE':
+            case "DELETE":
                 Url = params.baseurl + params.url;
                 Delete(Url)
+                    .then((result) => {
+                    resolve(result);
+                })
+                    .catch((err) => {
+                    console.log(err);
+                    let error = errorInterceptor();
+                    reject(error);
+                });
+                break;
+            case "DOWNLOAD":
+                Url = params.url;
+                download(Url, params === null || params === void 0 ? void 0 : params.responseType)
                     .then((result) => {
                     resolve(result);
                 })
